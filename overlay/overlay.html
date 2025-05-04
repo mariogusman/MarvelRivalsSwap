@@ -718,66 +718,6 @@ function ensureFullscreenPosition() {
       });
     }
 
-    // --- Banner Toast Logic ---
-    /**
-     * Shows a temporary toast in the close-banner slot, with custom text and animation.
-     * @param {string} text - The message to display.
-     * @param {number} duration - How long to show (ms).
-     */
-    function showBannerToast(text, duration = 3000) {
-      const banner = document.getElementById('close-banner');
-      if (!banner) return;
-
-      // Save original content to restore later
-      if (!banner._originalHTML) banner._originalHTML = banner.innerHTML;
-
-      // Set new text (with optional icon)
-      banner.innerHTML = `
-        <svg width="32" height="32" viewBox="0 0 32 32" style="vertical-align:middle;margin-right:0.5vw;">
-          <polygon points="24,4 8,16 24,28" fill="#fff" opacity="0.7"/>
-        </svg>
-        ▼ Press <span class="keycap">Alt</span> + <span class="keycap">S</span> during a match to view recommendations
-      `;
-
-      // Show with animation
-      banner.classList.add('banner-in');
-      banner.style.transition = 'opacity 0.32s cubic-bezier(.4,0,.2,1), transform 0.32s cubic-bezier(.4,0,.2,1)';
-      banner.style.opacity = '1';
-      banner.style.transform = 'skewX(-8deg) translateX(0)';
-
-      // Hide after duration with slide/fade out
-      setTimeout(() => {
-        banner.style.opacity = '0';
-        banner.style.transform = 'skewX(-8deg) translateX(-60px)';
-        banner.classList.remove('banner-in');
-        // Restore original after animation
-        setTimeout(() => {
-          banner.innerHTML = banner._originalHTML;
-          banner.style.opacity = '';
-          banner.style.transform = '';
-          banner.classList.remove('banner-in');
-        }, 350); // Match your transition duration
-      }, duration);
-    }
-
-    // --- Trigger toast on game launch (not match start) ---
-    window.addEventListener('DOMContentLoaded', () => {
-      animatePanelsIn();
-
-      // Only show on game launch, not every overlay open
-      if (window.overwolf) {
-        overwolf.games.getRunningGameInfo(function(info) {
-          if (info && info.isRunning && info.classId === 24890) {
-            // Use a flag in sessionStorage to only show once per game launch
-            if (!sessionStorage.getItem('bannerToastShown')) {
-              showBannerToast('▼ Press <span class="keycap">Alt</span> + <span class="keycap">S</span> during a match to view recommendations', 3000);
-              sessionStorage.setItem('bannerToastShown', '1');
-            }
-          }
-        });
-      }
-    });
-
     // Also animate on initial load (for manual refresh/testing)
     window.addEventListener('DOMContentLoaded', () => {
       animatePanelsIn();
