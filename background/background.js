@@ -1,3 +1,20 @@
+(function(){
+  const origLog = console.log.bind(console);
+  console.log = (...args) => {
+    const expanded = args.map(arg => {
+      if (arg !== null && typeof arg === 'object') {
+        try {
+          return JSON.stringify(arg, null, 2);
+        } catch(e) {
+          return arg;
+        }
+      }
+      return arg;
+    });
+    origLog(...expanded);
+  };
+})();
+
 // background.js - implements full Python algorithm with weights and all sub-scores
 
 // debounce helper
