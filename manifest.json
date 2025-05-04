@@ -66,6 +66,21 @@
           "height": 1440
         },
         "start_position": { "top": 0, "left": 0 }
+      },
+      "toast": {
+        "file": "toast/toast.html",
+        "transparent": true,
+        "resizable": false,
+        "clickthrough": true,
+        "show_in_taskbar": false,
+        "native_window": true,
+        "topmost": true,
+        "in_game_only": true,
+        "size": {
+          "width": 2560,
+          "height": 1440
+        },
+        "start_position": { "top": 0, "left": 0 }
       }
     }
   }

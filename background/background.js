@@ -1,19 +1,22 @@
-(function(){
-  const origLog = console.log.bind(console);
-  console.log = (...args) => {
-    const expanded = args.map(arg => {
-      if (arg !== null && typeof arg === 'object') {
-        try {
-          return JSON.stringify(arg, null, 2);
-        } catch(e) {
-          return arg;
-        }
-      }
-      return arg;
-    });
-    origLog(...expanded);
-  };
-})();
+// Advanced Logging for debugging
+// This will log all objects as pretty-printed JSON strings, which is useful for debugging
+// but can be slow for large objects. Use with caution in production code.
+// (function(){
+//   const origLog = console.log.bind(console);
+//   console.log = (...args) => {
+//     const expanded = args.map(arg => {
+//       if (arg !== null && typeof arg === 'object') {
+//         try {
+//           return JSON.stringify(arg, null, 2);
+//         } catch(e) {
+//           return arg;
+//         }
+//       }
+//       return arg;
+//     });
+//     origLog(...expanded);
+//   };
+// })();
 
 // background.js - implements full Python algorithm with weights and all sub-scores
 
@@ -448,6 +451,28 @@ function handleGameInfoScene(event) {
   }
 }
 
+async function showGameLaunchToastOnce() {
+  if (!sessionStorage.getItem('bannerToastShown')) {
+    overwolf.windows.obtainDeclaredWindow('toast', result => {
+      if (result && result.window && result.window.id) {
+        overwolf.windows.restore(result.window.id, () => {
+          overwolf.windows.sendMessage(
+            result.window.id,
+            'show_game_launch_toast',
+            { message: '▼ Press Alt+S during a match to view recommendations' },
+            function() {}
+          );
+          // Auto-close toast after 5s (matches toast duration + animation)
+          setTimeout(() => {
+            overwolf.windows.close(result.window.id, () => {});
+          }, 6000);
+          sessionStorage.setItem('bannerToastShown', '1');
+        });
+      }
+    });
+  }
+}
+
 async function init() {
   await loadStaticData();
   overwolf.games.events.onInfoUpdates2.addListener(handleInfoUpdates);
@@ -457,6 +482,13 @@ async function init() {
     if (h.name === 'show_overlay') toggleOverlay();
   });
   overwolf.games.events.setRequiredFeatures(['match_info', 'death'], () => {});
+
+  // --- Show toast on game launch ---
+  overwolf.games.getRunningGameInfo(function(info) {
+    if (info && info.isRunning && info.classId === 24890) {
+      showGameLaunchToastOnce();
+    }
+  });
 }
 
 init();

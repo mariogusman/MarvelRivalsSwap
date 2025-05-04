@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Marvel Rivals Toast</title>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      background: transparent;
+      overflow: hidden;
+    }
+    #toast {
+      position: absolute;
+      top: 20vw;
+      left: 4.3vw;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(120deg, rgba(255,255,255,0.30) 60%, rgba(255,255,255,0.03) 100%);
+      border: 2px solid rgba(255,255,255,0.22);
+      border-radius: 0vw;
+      font-family: 'Teko', sans-serif;
+      font-size: 1vw;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      padding: 0.15vw 1.7vw 0.15vw 0.9vw;
+      box-shadow: 0 0.1vw 0.5vw rgba(0,0,0,0.13);
+      opacity: 0;
+      transform: skewX(-8deg) translateX(-60px);
+      transition: opacity 0.32s cubic-bezier(.4,0,.2,1), transform 0.32s cubic-bezier(.4,0,.2,1);
+      z-index: 10;
+      pointer-events: none;
+      border-right: 3px solid #fff3;
+      border-left: 4px solid #fff4;
+      min-width: 420px;
+      max-width: 900px;
+      width: fit-content;
+      height: 54px;
+      flex-direction: row;
+      overflow: visible;
+    }
+    #toast > .toast-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      transform: skewX(8deg);
+      z-index: 2;
+    }
+    #toast.visible {
+      opacity: 1;
+      transform: skewX(-8deg) translateX(0);
+    }
+    #toast.hide {
+      opacity: 0;
+      transform: skewX(-8deg) translateX(-60px);
+      transition: opacity 0.32s cubic-bezier(.4,0,.2,1), transform 0.32s cubic-bezier(.4,0,.2,1);
+    }
+    #toast svg {
+      margin-right: 0.7vw;
+      margin-left: 0.1vw;
+      width: 2vw;
+      height: 2vw;
+      min-width: 2vw;
+      min-height: 2vw;
+      opacity: 0.85;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .keycap {
+      display: inline-block;
+      min-width: 1.8vw;
+      padding: 0.1vw 0.5vw 0.08vw 0.5vw;
+      margin: 0 0.15vw;
+      border: 2px solid #fff;
+      border-radius: 0.25vw;
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      font-family: 'Teko', sans-serif;
+      font-size: 1.1vw;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      box-shadow: 0 0.08vw 0.18vw rgba(0,0,0,0.13);
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1.1;
+      box-sizing: border-box;
+      border-bottom: 3px solid #fff8;
+    }
+    #toast-progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 0.1vw;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0%, #fff 100%);
+      border-radius: 0 0 0.16vw 0.16vw;
+      box-shadow: 0 0.05vw 0.18vw #0008;
+      z-index: 1;
+      transition: width 0s;
+    }
+  </style>
+</head>
+<body>
+  <div id="toast">
+    <div class="toast-content">
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <polygon points="24,4 8,16 24,28" fill="#fff" opacity="0.7"/>
+      </svg>
+      <span id="toast-text"></span>
+    </div>
+    <div id="toast-progress"></div>
+  </div>
+  <script>
+    function showToast(text, duration = 3500) { 
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      const progress = document.getElementById('toast-progress');
+      toastText.innerHTML = text;
+      toast.classList.remove('hide');
+      toast.classList.add('visible');
+      progress.style.transition = 'none';
+      progress.style.width = '0%';
+      setTimeout(() => {
+        progress.style.transition = `width ${duration}ms linear`;
+        progress.style.width = '100%';
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.remove('visible');
+        toast.classList.add('hide');
+        progress.style.transition = 'none';
+        progress.style.width = '0%';
+      }, duration);
+    }
+
+    // Ensure the toast window is always full screen and on the correct monitor
+    function ensureFullscreenPosition() {
+      if (window.overwolf && overwolf.windows) {
+        overwolf.windows.getCurrentWindow(res => {
+          if (res.success) {
+            const id = res.window.id;
+            overwolf.windows.changePosition(id, 0, 0, () => {
+              overwolf.windows.getMonitorsList(monitorsInfo => {
+                const scale = window.devicePixelRatio || 1;
+                if (monitorsInfo.success && monitorsInfo.displays.length > 0) {
+                  const mainMonitor = monitorsInfo.displays[0];
+                  overwolf.windows.changeSize(
+                    id,
+                    Math.round(mainMonitor.width * scale),
+                    Math.round(mainMonitor.height * scale)
+                  );
+                } else {
+                  const { width, height } = window.screen;
+                  overwolf.windows.changeSize(
+                    id,
+                    Math.round(width * scale),
+                    Math.round(height * scale)
+                  );
+                }
+              });
+            });
+          }
+        });
+      }
+    }
+    window.addEventListener('load', ensureFullscreenPosition);
+    setTimeout(ensureFullscreenPosition, 500);
+
+    // Listen for Overwolf message
+    if (window.overwolf) {
+      overwolf.windows.getCurrentWindow(function(win) {
+        overwolf.windows.onMessageReceived.addListener(function(msg) {
+          if (
+            (msg.window_id && msg.window_id === win.id) ||
+            (msg.sourceWindowId && msg.sourceWindowId === win.id) ||
+            !msg.window_id
+          ) {
+            if (msg.messageId === 'show_game_launch_toast') {
+              showToast(msg.data.message, 3500);
+            }
+          }
+        });
+      });
+    }
+
+    // For dev/test: show toast on load if no Overwolf, or always for debug
+    // window.addEventListener('DOMContentLoaded', function() {
+    //   showToast('▼ Press <span class="keycap">Alt</span>+<span class="keycap">S</span> during a match to view recommendations', 3500);
+    // });
+  </script>
+</body>
+</html>

@@ -393,40 +393,38 @@
     </div>
   </div>
   <script>
-// Improved fullscreen positioning code
-function ensureFullscreenPosition() {
-  if (overwolf && overwolf.windows) {
-    overwolf.windows.getCurrentWindow(res => {
-      if (res.success) {
-        const id = res.window.id;
-        overwolf.windows.changePosition(id, 0, 0, () => {
-          overwolf.windows.getMonitorsList(monitorsInfo => {
-            const scale = window.devicePixelRatio || 1;
-            if (monitorsInfo.success && monitorsInfo.displays.length > 0) {
-              const mainMonitor = monitorsInfo.displays[0];
-              overwolf.windows.changeSize(
-                id,
-                Math.round(mainMonitor.width * scale),
-                Math.round(mainMonitor.height * scale)
-              );
-            } else {
-              const { width, height } = window.screen;
-              overwolf.windows.changeSize(
-                id,
-                Math.round(width * scale),
-                Math.round(height * scale)
-              );
-            }
-          });
+    // Improved fullscreen positioning code
+    function ensureFullscreenPosition() {
+      if (overwolf && overwolf.windows) {
+        overwolf.windows.getCurrentWindow(res => {
+          if (res.success) {
+            const id = res.window.id;
+            overwolf.windows.changePosition(id, 0, 0, () => {
+              overwolf.windows.getMonitorsList(monitorsInfo => {
+                const scale = window.devicePixelRatio || 1;
+                if (monitorsInfo.success && monitorsInfo.displays.length > 0) {
+                  const mainMonitor = monitorsInfo.displays[0];
+                  overwolf.windows.changeSize(
+                    id,
+                    Math.round(mainMonitor.width * scale),
+                    Math.round(mainMonitor.height * scale)
+                  );
+                } else {
+                  const { width, height } = window.screen;
+                  overwolf.windows.changeSize(
+                    id,
+                    Math.round(width * scale),
+                    Math.round(height * scale)
+                  );
+                }
+              });
+            });
+          }
         });
       }
-    });
-  }
-}
+    }
     // Call the function when the page loads
     window.addEventListener('load', ensureFullscreenPosition);
-    
-    // Also retry after a short delay to ensure it applies correctly
     setTimeout(ensureFullscreenPosition, 500);
 
     // Load dynamic data
@@ -435,156 +433,155 @@ function ensureFullscreenPosition() {
     window.charactersOverview = JSON.parse(localStorage.getItem('characters_overview') || '{}');
 
     // Render swap cards
-  const cards = document.getElementById('cards-container');
-  const shouldShowPlaceholder =
-    !suggestions.length ||
-    (suggestions.length === 1 && suggestions[0].placeholder);
+    const cards = document.getElementById('cards-container');
+    const shouldShowPlaceholder =
+      !suggestions.length ||
+      (suggestions.length === 1 && suggestions[0].placeholder);
 
-  if (shouldShowPlaceholder) {
-    const card = document.createElement('div');
-    card.className = 'card best';
-    card.style.minHeight = '10vw';
-    card.innerHTML = `
-      <div class="content">
-        <div class="title" style="color:#feda4a;">
-          Gathering Data...
-        </div>
-        <div style="font-size:1vw;color:#ccc;margin-top:1vw;">
-          Waiting for more players to join before showing swap suggestions.
-        </div>
-      </div>
-    `;
-    cards.appendChild(card);
-  } else {
-    suggestions.forEach((h, i) => {
+    if (shouldShowPlaceholder) {
       const card = document.createElement('div');
-      card.className = 'card' + (i === 0 ? ' best' : '');
-
-      // Hero image
-      const img = document.createElement('img');
-      img.className = 'card-img';
-      img.src = `../assets/images/head-${h.hero}.png`;
-      card.appendChild(img);
-
-      // Matches reviewed (tiny font, under image)
-      const heroOverview = window.charactersOverview?.[h.hero];
-      const totalMatches = heroOverview?.matches ?? h.matches ?? 0;
-      const matchesDiv = document.createElement('div');
-      matchesDiv.style.position = 'absolute';
-      matchesDiv.style.left = '1vw';
-      matchesDiv.style.top = '6.7vw';
-      matchesDiv.style.width = '6vw';
-      matchesDiv.style.textAlign = 'center';
-      matchesDiv.style.fontSize = '0.7vw';
-      matchesDiv.style.color = '#ccc';
-      matchesDiv.style.fontFamily = 'Teko, sans-serif';
-      matchesDiv.innerHTML = `<b>${totalMatches.toLocaleString()}</b> MATCHES`;
-      card.appendChild(matchesDiv);
-
-      // Content wrapper
-      const content = document.createElement('div');
-      content.className = 'content';
-
-      // Title + score
-      const title = document.createElement('div');
-      title.className = 'title';
-      title.innerHTML = `
-        ${h.hero.replace(/-/g,' ').toUpperCase()}
-        <span class="score">
-          ${h.win_chance_increase >= 0 ? '+' : ''}${h.win_chance_increase.toFixed(2)}%<br>
-          <span class="win-small">win chance</span>
-        </span>
+      card.className = 'card best';
+      card.style.minHeight = '10vw';
+      card.innerHTML = `
+        <div class="content">
+          <div class="title" style="color:#feda4a;">
+            Gathering Data...
+          </div>
+          <div style="font-size:1vw;color:#ccc;margin-top:1vw;">
+            Waiting for more players to join before showing swap suggestions.
+          </div>
+        </div>
       `;
-      content.appendChild(title);
-
-      // --- Accurate stat values ---
-      const myTeam = teams?.your?.members ?? [];
-      const enemyTeam = teams?.enemy?.members ?? [];
-      const teammates = myTeam.filter(m => m !== h.hero);
-
-      const avgWinRate = heroOverview?.win_rate ?? h.avg_win_rate;
-      const avgWinRateNA = avgWinRate === null || avgWinRate === undefined || isNaN(avgWinRate);
-      const vsEnemyWinRate = h.avg_vs_enemy !== undefined && h.avg_vs_enemy !== null
-        ? h.avg_vs_enemy
-        : 50;
-      const teamUpBonus = h.synergy;
-
-      const teamupNA = teammates.length === 0 ||
-                      teamUpBonus === null ||
-                      teamUpBonus === undefined ||
-                      isNaN(teamUpBonus);
-
-      const compBonus = h.comp_bonus;
-      const compBonusNA = compBonus === null || compBonus === undefined || isNaN(compBonus);
-
-      const stats = [
-        { 
-          label: 'Win% Vs Enemy Team:', 
-          value: vsEnemyWinRate, 
-          raw: h.avg_vs_enemy,
-          isNA: !enemyTeam.length
-        },
-        { 
-          label: 'Average Win Rate:', 
-          value: avgWinRate, 
-          raw: avgWinRate,
-          isNA: avgWinRateNA
-        },
-        { 
-          label: 'Team-up Bonus:', 
-          value: teamUpBonus, 
-          raw: h.synergy,
-          isNA: teamupNA
-        },
-        { 
-          label: 'Team Comp:', 
-          value: compBonus, 
-          raw: compBonus,
-          isNA: compBonusNA
-        }
-      ];
-
-      stats.forEach((stat, idx) => {
-        const isNA = stat.isNA;
-        const row = document.createElement('div');
-        row.className = 'stat';
-
-        // Label
-        const lbl = document.createElement('div');
-        lbl.className = 'label' + (isNA ? ' na' : '');
-        lbl.textContent = stat.label;
-        row.appendChild(lbl);
-
-        // Dots container
-        const dots = document.createElement('div');
-        dots.className = 'dots';
-        const offset = idx * -0.3;
-        dots.style.transform = `translateX(${offset}vw)`;
-
-        // Calculate how many of 20 dots to fill (each dot = 5%)
-        const filledCount = isNA ? 0 : Math.round(stat.value / 5);
-        for (let j = 0; j < 20; j++) {
-          const dot = document.createElement('div');
-          dot.className = 'dot' + (j < filledCount ? ' filled' : '') + (isNA ? ' na' : '');
-          dots.appendChild(dot);
-        }
-        row.appendChild(dots);
-
-        // Stat value
-        const val = document.createElement('div');
-        val.className = 'stat-value' + (isNA ? ' na' : '');
-        val.textContent = isNA ? 'N/A' : stat.value.toFixed(1) + '%';
-        val.style.transform = `translateX(${offset}vw)`;
-        row.appendChild(val);
-
-        content.appendChild(row);
-      });
-
-      card.appendChild(content);
       cards.appendChild(card);
-    });
-  }
+    } else {
+      suggestions.forEach((h, i) => {
+        const card = document.createElement('div');
+        card.className = 'card' + (i === 0 ? ' best' : '');
 
+        // Hero image
+        const img = document.createElement('img');
+        img.className = 'card-img';
+        img.src = `../assets/images/head-${h.hero}.png`;
+        card.appendChild(img);
+
+        // Matches reviewed (tiny font, under image)
+        const heroOverview = window.charactersOverview?.[h.hero];
+        const totalMatches = heroOverview?.matches ?? h.matches ?? 0;
+        const matchesDiv = document.createElement('div');
+        matchesDiv.style.position = 'absolute';
+        matchesDiv.style.left = '1vw';
+        matchesDiv.style.top = '6.7vw';
+        matchesDiv.style.width = '6vw';
+        matchesDiv.style.textAlign = 'center';
+        matchesDiv.style.fontSize = '0.7vw';
+        matchesDiv.style.color = '#ccc';
+        matchesDiv.style.fontFamily = 'Teko, sans-serif';
+        matchesDiv.innerHTML = `<b>${totalMatches.toLocaleString()}</b> MATCHES`;
+        card.appendChild(matchesDiv);
+
+        // Content wrapper
+        const content = document.createElement('div');
+        content.className = 'content';
+
+        // Title + score
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.innerHTML = `
+          ${h.hero.replace(/-/g,' ').toUpperCase()}
+          <span class="score">
+            ${h.win_chance_increase >= 0 ? '+' : ''}${h.win_chance_increase.toFixed(2)}%<br>
+            <span class="win-small">win chance</span>
+          </span>
+        `;
+        content.appendChild(title);
+
+        // --- Accurate stat values ---
+        const myTeam = teams?.your?.members ?? [];
+        const enemyTeam = teams?.enemy?.members ?? [];
+        const teammates = myTeam.filter(m => m !== h.hero);
+
+        const avgWinRate = heroOverview?.win_rate ?? h.avg_win_rate;
+        const avgWinRateNA = avgWinRate === null || avgWinRate === undefined || isNaN(avgWinRate);
+        const vsEnemyWinRate = h.avg_vs_enemy !== undefined && h.avg_vs_enemy !== null
+          ? h.avg_vs_enemy
+          : 50;
+        const teamUpBonus = h.synergy;
+
+        const teamupNA = teammates.length === 0 ||
+                        teamUpBonus === null ||
+                        teamUpBonus === undefined ||
+                        isNaN(teamUpBonus);
+
+        const compBonus = h.comp_bonus;
+        const compBonusNA = compBonus === null || compBonus === undefined || isNaN(compBonus);
+
+        const stats = [
+          { 
+            label: 'Win% Vs Enemy Team:', 
+            value: vsEnemyWinRate, 
+            raw: h.avg_vs_enemy,
+            isNA: !enemyTeam.length
+          },
+          { 
+            label: 'Average Win Rate:', 
+            value: avgWinRate, 
+            raw: avgWinRate,
+            isNA: avgWinRateNA
+          },
+          { 
+            label: 'Team-up Bonus:', 
+            value: teamUpBonus, 
+            raw: h.synergy,
+            isNA: teamupNA
+          },
+          { 
+            label: 'Team Comp:', 
+            value: compBonus, 
+            raw: compBonus,
+            isNA: compBonusNA
+          }
+        ];
+
+        stats.forEach((stat, idx) => {
+          const isNA = stat.isNA;
+          const row = document.createElement('div');
+          row.className = 'stat';
+
+          // Label
+          const lbl = document.createElement('div');
+          lbl.className = 'label' + (isNA ? ' na' : '');
+          lbl.textContent = stat.label;
+          row.appendChild(lbl);
+
+          // Dots container
+          const dots = document.createElement('div');
+          dots.className = 'dots';
+          const offset = idx * -0.3;
+          dots.style.transform = `translateX(${offset}vw)`;
+
+          // Calculate how many of 20 dots to fill (each dot = 5%)
+          const filledCount = isNA ? 0 : Math.round(stat.value / 5);
+          for (let j = 0; j < 20; j++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (j < filledCount ? ' filled' : '') + (isNA ? ' na' : '');
+            dots.appendChild(dot);
+          }
+          row.appendChild(dots);
+
+          // Stat value
+          const val = document.createElement('div');
+          val.className = 'stat-value' + (isNA ? ' na' : '');
+          val.textContent = isNA ? 'N/A' : stat.value.toFixed(1) + '%';
+          val.style.transform = `translateX(${offset}vw)`;
+          row.appendChild(val);
+
+          content.appendChild(row);
+        });
+
+        card.appendChild(content);
+        cards.appendChild(card);
+      });
+    }
 
     // Render teams
     const teamBox = document.getElementById('team-container');
@@ -695,7 +692,6 @@ function ensureFullscreenPosition() {
             state.window_id === win.id &&
             (state.window_state === "hidden" || state.window_state === "minimized")
           ) {
-            // Not needed if you only hide via hotkey, but can be kept for completeness
             document.body.classList.remove('bg-fade-in');
             document.body.classList.add('fade-out');
             document.querySelector('.swap-overlay')?.classList.remove('animated-in');
