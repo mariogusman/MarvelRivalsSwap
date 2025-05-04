@@ -1,0 +1,236 @@
+[
+  {
+    "team": [
+      "hela",
+      "loki",
+      "thor"
+    ],
+    "tier": "S",
+    "win_rate": 61.98,
+    "pick_rate": 1.7,
+    "matches": 2691
+  },
+  {
+    "team": [
+      "venom",
+      "peni-parker",
+      "spider-man"
+    ],
+    "tier": "S",
+    "win_rate": 61.89,
+    "pick_rate": 1.12,
+    "matches": 1771
+  },
+  {
+    "team": [
+      "adam-warlock",
+      "star-lord",
+      "mantis"
+    ],
+    "tier": "S",
+    "win_rate": 59.14,
+    "pick_rate": 0.87,
+    "matches": 1378
+  },
+  {
+    "team": [
+      "namor",
+      "iron-man"
+    ],
+    "tier": "S",
+    "win_rate": 58.87,
+    "pick_rate": 3.85,
+    "matches": 6103
+  },
+  {
+    "team": [
+      "human-torch",
+      "storm"
+    ],
+    "tier": "S",
+    "win_rate": 58.53,
+    "pick_rate": 2.29,
+    "matches": 3634
+  },
+  {
+    "team": [
+      "namor",
+      "hulk"
+    ],
+    "tier": "S",
+    "win_rate": 58.11,
+    "pick_rate": 12.61,
+    "matches": 19994
+  },
+  {
+    "team": [
+      "magik",
+      "black-panther"
+    ],
+    "tier": "S",
+    "win_rate": 57.1,
+    "pick_rate": 2.94,
+    "matches": 4657
+  },
+  {
+    "team": [
+      "mister-fantastic",
+      "invisible-woman"
+    ],
+    "tier": "S",
+    "win_rate": 55.06,
+    "pick_rate": 14.24,
+    "matches": 22591
+  },
+  {
+    "team": [
+      "human-torch",
+      "invisible-woman"
+    ],
+    "tier": "S",
+    "win_rate": 54.89,
+    "pick_rate": 8.65,
+    "matches": 13721
+  },
+  {
+    "team": [
+      "iron-fist",
+      "luna-snow"
+    ],
+    "tier": "S",
+    "win_rate": 54.75,
+    "pick_rate": 8.5,
+    "matches": 13478
+  },
+  {
+    "team": [
+      "emma-frost",
+      "psylocke"
+    ],
+    "tier": "S",
+    "win_rate": 54.5,
+    "pick_rate": 17.0,
+    "matches": 26954
+  },
+  {
+    "team": [
+      "doctor-strange",
+      "scarlet-witch"
+    ],
+    "tier": "S",
+    "win_rate": 54.21,
+    "pick_rate": 16.95,
+    "matches": 26883
+  },
+  {
+    "team": [
+      "captain-america",
+      "winter-soldier"
+    ],
+    "tier": "S",
+    "win_rate": 53.87,
+    "pick_rate": 4.66,
+    "matches": 7394
+  },
+  {
+    "team": [
+      "wolverine",
+      "hulk"
+    ],
+    "tier": "S",
+    "win_rate": 53.83,
+    "pick_rate": 1.22,
+    "matches": 1930
+  },
+  {
+    "team": [
+      "rocket-raccoon",
+      "the-punisher"
+    ],
+    "tier": "S",
+    "win_rate": 53.12,
+    "pick_rate": 12.92,
+    "matches": 20491
+  },
+  {
+    "team": [
+      "squirrel-girl",
+      "spider-man"
+    ],
+    "tier": "A",
+    "win_rate": 51.92,
+    "pick_rate": 2.77,
+    "matches": 4386
+  },
+  {
+    "team": [
+      "emma-frost",
+      "magneto"
+    ],
+    "tier": "S",
+    "win_rate": 49.99,
+    "pick_rate": 16.14,
+    "matches": 25600
+  },
+  {
+    "team": [
+      "the-thing",
+      "invisible-woman"
+    ],
+    "tier": "A",
+    "win_rate": 49.33,
+    "pick_rate": 15.94,
+    "matches": 25287
+  },
+  {
+    "team": [
+      "groot",
+      "jeff-the-land-shark",
+      "rocket-raccoon"
+    ],
+    "tier": "A",
+    "win_rate": 49.11,
+    "pick_rate": 0.67,
+    "matches": 1065
+  },
+  {
+    "team": [
+      "luna-snow",
+      "jeff-the-land-shark"
+    ],
+    "tier": "A",
+    "win_rate": 49.07,
+    "pick_rate": 4.98,
+    "matches": 7893
+  },
+  {
+    "team": [
+      "cloak-dagger",
+      "moon-knight"
+    ],
+    "tier": "A",
+    "win_rate": 48.51,
+    "pick_rate": 14.51,
+    "matches": 23019
+  },
+  {
+    "team": [
+      "the-thing",
+      "wolverine"
+    ],
+    "tier": "A",
+    "win_rate": 47.28,
+    "pick_rate": 2.08,
+    "matches": 3304
+  },
+  {
+    "team": [
+      "black-widow",
+      "hawkeye"
+    ],
+    "tier": "B",
+    "win_rate": 44.66,
+    "pick_rate": 0.93,
+    "matches": 1469
+  }
+]

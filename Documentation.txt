@@ -1,0 +1,199 @@
+# Marvel Rivals API Documentation
+
+## Overview
+This documentation describes the game events API for the Marvel Rivals game.
+
+## Available Features
+- gep_internal
+- match_info
+- game_info
+
+## Game Events Status
+It's highly recommended to communicate errors and warnings to your app users. Check current game event status here or easily check game event status from your app using our API.
+
+## Feature: match_info
+
+### Info Updates
+
+| Key | Category | Values | Notes | Since GEP Ver. |
+|-----|----------|--------|-------|----------------|
+| roster_xx | match_info | A full roster with data during the match. | [See roster details](#roster_xx-note) | 269.0 |
+| match_id | match_info | The match ID of the current match. | [See match_id details](#match_id-note) | 269.0 |
+| game_type | match_info | The current game type. | [See game_type details](#game_type-note) | 269.0 |
+| game_mode | match_info | The current game mode. | [See game_mode details](#game_mode-note) | 269.0 |
+| map | match_info | The current played map. | [See map details](#map-note) | 269.0 |
+| player_stats | match_info | Local player's statistics during the match. | [See player_stats details](#player_stats-note) | 269.0 |
+| match_outcome | match_info | Outcome of the current match | [See match_outcome details](#match_outcome-note) | 272.0 |
+
+### Notes
+
+#### roster_xx note
+The roster index number will change dynamically between 0-11. To keep track of each player, use the UID number or name parameters.
+
+When playing in Competitive mode with Diamond 3 players and above, all player names will be hidden as ***** until the round begins. Once the round starts, player names will be revealed, except for players who have the hidden names option enabled.
+
+**List of parameters:**
+- name - player name
+- uid - User ID
+- character_name - character name
+- character_id - character ID
+- team - team number
+- is_teammate - is the player one of your teammates true/false
+- kills - number of kills
+- deaths - number of deaths
+- assists - number of assists
+- ult_charge - the player's current ultimate ability charge percent (teammates only)
+- is_alive - if the player is alive or dead
+- is_local - if the player is the local player this parameter is true
+
+**Data Example:**
+```json
+{"feature":"match_info","category":"match_info","key":"roster_1","value":"{\"uid\":\"1380486120\",\"name\":\"OverWolf\",\"character_id\":\"1017\",\"team\":1,\"kills\":9,\"deaths\":5,\"assists\":0,\"ult_charge\":100,\"is_alive\":true,\"is_teammate\":true,\"is_local\":true,\"character_name\":\"HUMAN TORCH\"}"}
+```
+
+#### match_id note
+**Data Example:**
+```json
+{"feature": "match_info", "category": "match_info", "key": "match_id", "data": "5664983_1735659917_267_11001_50"}
+```
+
+#### game_type note
+**Possible values:**
+- Practice
+- Quick match
+- Competitive
+- Arcade
+- Best practice
+
+If a value is not mapped, it will return "UNKNOWN"
+
+**Data Example:**
+```json
+{"feature":"match_info","category":"match_info","key":"game_type","value":"Practice"}
+```
+
+#### game_mode note
+If a value is not mapped, it will return "UNKNOWN"
+
+**Data Example:**
+```json
+{"feature":"match_info","category":"match_info","key":"game_mode","value":"Practice range"}
+```
+
+#### map note
+If a value is not mapped, it will return "UNKNOWN"
+
+**Data Example:**
+```json
+{"feature":"match_info","category":"match_info","key":"map","value":"Hall of djaalia"}
+```
+
+#### player_stats note
+**Data Example:**
+```json
+{"feature":"match_info","category":"match_info","key":"player_stats","value":"{\"damage_dealt\":80,\"damage_block\":84,\"total_heal\":0}"}
+```
+
+#### match_outcome note
+**Possible values:**
+- Victory
+- Defeat
+- Draw
+
+**Data Example:**
+```json
+{"info":{"match_info":{"match_outcome":"victory"}},"feature":"match_info"}
+```
+
+### Events
+
+| Event | Event Data | Fired When | Notes | Since GEP Ver. |
+|-------|------------|------------|-------|----------------|
+| match_start | null | The match started | [See details](#match_start-note) | 269.0 |
+| match_end | null | The match ended | [See details](#match_end-note) | 269.0 |
+| round_start | null | Round started. | [See details](#round_start-note) | 271.0 |
+| round_end | null | Round ended. | [See details](#round_end-note) | 271.0 |
+| death | The total number of deaths | The player is dead | [See details](#death-note) | 269.0 |
+| kill | The total number of kills | The player killed another player | [See details](#kill-note) | 269.0 |
+| assist | The total number of assists | The player assisted another player | [See details](#assist-note) | 269.0 |
+| kill_feed | The name of the attacker and victim | Anytime a player dies in the match. | [See details](#kill_feed-note) | 269.0 |
+
+#### match_start note
+**Data Example:**
+```json
+{"events":[{"name":"match_start","data":""}]}
+```
+
+#### match_end note
+**Data Example:**
+```json
+{"events":[{"name":"match_end","data":""}]}
+```
+
+#### round_start note
+**Data Example:**
+```json
+{"name":"round_start","data":""}
+```
+
+#### round_end note
+**Data Example:**
+```json
+{"name":"round_end","data":""}
+```
+
+#### death note
+**Data Example:**
+```json
+{"events":[{"name":"death","data":3}]}
+```
+
+#### kill note
+**Data Example:**
+```json
+{"events":[{"name":"kill","data":4}]}
+```
+
+#### assist note
+**Data Example:**
+```json
+{"events":[{"name":"assist","data":1}]}
+```
+
+#### kill_feed note
+**Data Example:**
+```json
+{"events": [{"name": "kill_feed","data": "{\"attacker\":\"Overwolf\",\"victim\":\"Underwolf\"}"}]}
+```
+
+## Feature: game_info
+
+### Info Updates
+
+| Key | Category | Values | Notes | Since GEP Ver. |
+|-----|----------|--------|-------|----------------|
+| scene | game_info | The name of the current scene. | [See details](#scene-note) | 269.0 |
+| player_name | game_info | The local player name | [See details](#player_name-note) | 269.0 |
+| player_id | game_info | the local player's ID | [See details](#player_id-note) | 270.0 |
+
+#### scene note
+**List of possible values:**
+- Lobby
+- Ingame
+
+**Data Example:**
+```json
+{"info":{"game_info":{"scene":"Lobby"}},"feature":"game_info"}
+```
+
+#### player_name note
+**Data Example:**
+```json
+{"info":{"game_info":{"player_name":"Overwolf"}},"feature":"game_info"}
+```
+
+#### player_id note
+**Data Example:**
+```json
+{"info":{"game_info":{"player_id":"1380486120"}},"feature":"game_info"}
+

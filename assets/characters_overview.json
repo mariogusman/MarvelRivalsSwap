@@ -1,0 +1,382 @@
+{
+  "rocket-raccoon": {
+    "slug": "rocket-raccoon",
+    "name": "Rocket Raccoon",
+    "role": "Strategist",
+    "tier": "S",
+    "win_rate": 54.5,
+    "pick_rate": 46.45,
+    "ban_rate": 2.99,
+    "matches": 693153
+  },
+  "mister-fantastic": {
+    "slug": "mister-fantastic",
+    "name": "Mister Fantastic",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 54.12,
+    "pick_rate": 13.29,
+    "ban_rate": 0.87,
+    "matches": 198319
+  },
+  "storm": {
+    "slug": "storm",
+    "name": "Storm",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 53.92,
+    "pick_rate": 4.64,
+    "ban_rate": 0.69,
+    "matches": 69236
+  },
+  "hulk": {
+    "slug": "hulk",
+    "name": "Hulk",
+    "role": "Vanguard",
+    "tier": "S",
+    "win_rate": 53.42,
+    "pick_rate": 11.16,
+    "ban_rate": 28.73,
+    "matches": 166563
+  },
+  "iron-man": {
+    "slug": "iron-man",
+    "name": "Iron Man",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 53.34,
+    "pick_rate": 11.27,
+    "ban_rate": 0.45,
+    "matches": 168158
+  },
+  "magik": {
+    "slug": "magik",
+    "name": "Magik",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 53.13,
+    "pick_rate": 13.99,
+    "ban_rate": 2.67,
+    "matches": 208800
+  },
+  "captain-america": {
+    "slug": "captain-america",
+    "name": "Captain America",
+    "role": "Vanguard",
+    "tier": "A",
+    "win_rate": 53.1,
+    "pick_rate": 11.36,
+    "ban_rate": 1.44,
+    "matches": 169499
+  },
+  "peni-parker": {
+    "slug": "peni-parker",
+    "name": "Peni Parker",
+    "role": "Vanguard",
+    "tier": "A",
+    "win_rate": 52.17,
+    "pick_rate": 10.41,
+    "ban_rate": 0.41,
+    "matches": 155344
+  },
+  "thor": {
+    "slug": "thor",
+    "name": "Thor",
+    "role": "Vanguard",
+    "tier": "A",
+    "win_rate": 51.83,
+    "pick_rate": 12.64,
+    "ban_rate": 0.28,
+    "matches": 188661
+  },
+  "mantis": {
+    "slug": "mantis",
+    "name": "Mantis",
+    "role": "Strategist",
+    "tier": "A",
+    "win_rate": 51.72,
+    "pick_rate": 9.67,
+    "ban_rate": 0.05,
+    "matches": 144279
+  },
+  "iron-fist": {
+    "slug": "iron-fist",
+    "name": "Iron Fist",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 51.43,
+    "pick_rate": 12.94,
+    "ban_rate": 11.49,
+    "matches": 193086
+  },
+  "loki": {
+    "slug": "loki",
+    "name": "Loki",
+    "role": "Strategist",
+    "tier": "A",
+    "win_rate": 51.35,
+    "pick_rate": 20.44,
+    "ban_rate": 3.95,
+    "matches": 305007
+  },
+  "human-torch": {
+    "slug": "human-torch",
+    "name": "Human Torch",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 50.97,
+    "pick_rate": 7.87,
+    "ban_rate": 7.52,
+    "matches": 117374
+  },
+  "emma-frost": {
+    "slug": "emma-frost",
+    "name": "Emma Frost",
+    "role": "Vanguard",
+    "tier": "A",
+    "win_rate": 50.05,
+    "pick_rate": 54.95,
+    "ban_rate": 5.81,
+    "matches": 820029
+  },
+  "groot": {
+    "slug": "groot",
+    "name": "Groot",
+    "role": "Vanguard",
+    "tier": "A",
+    "win_rate": 49.84,
+    "pick_rate": 9.77,
+    "ban_rate": 41.54,
+    "matches": 145791
+  },
+  "black-panther": {
+    "slug": "black-panther",
+    "name": "Black Panther",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 49.51,
+    "pick_rate": 9.3,
+    "ban_rate": 4.76,
+    "matches": 138800
+  },
+  "doctor-strange": {
+    "slug": "doctor-strange",
+    "name": "Doctor Strange",
+    "role": "Vanguard",
+    "tier": "B",
+    "win_rate": 49.02,
+    "pick_rate": 16.83,
+    "ban_rate": 2.64,
+    "matches": 251118
+  },
+  "adam-warlock": {
+    "slug": "adam-warlock",
+    "name": "Adam Warlock",
+    "role": "Strategist",
+    "tier": "B",
+    "win_rate": 48.84,
+    "pick_rate": 8.44,
+    "ban_rate": 0.28,
+    "matches": 125924
+  },
+  "spider-man": {
+    "slug": "spider-man",
+    "name": "Spider Man",
+    "role": "Duelist",
+    "tier": "A",
+    "win_rate": 48.82,
+    "pick_rate": 18.23,
+    "ban_rate": 31.64,
+    "matches": 272082
+  },
+  "hela": {
+    "slug": "hela",
+    "name": "Hela",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 48.81,
+    "pick_rate": 11.08,
+    "ban_rate": 8.72,
+    "matches": 165318
+  },
+  "scarlet-witch": {
+    "slug": "scarlet-witch",
+    "name": "Scarlet Witch",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 48.58,
+    "pick_rate": 17.08,
+    "ban_rate": 1.74,
+    "matches": 254905
+  },
+  "psylocke": {
+    "slug": "psylocke",
+    "name": "Psylocke",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 48.32,
+    "pick_rate": 15.14,
+    "ban_rate": 1.23,
+    "matches": 225891
+  },
+  "venom": {
+    "slug": "venom",
+    "name": "Venom",
+    "role": "Vanguard",
+    "tier": "B",
+    "win_rate": 48.23,
+    "pick_rate": 10.87,
+    "ban_rate": 0.82,
+    "matches": 162203
+  },
+  "the-thing": {
+    "slug": "the-thing",
+    "name": "The Thing",
+    "role": "Vanguard",
+    "tier": "B",
+    "win_rate": 48.15,
+    "pick_rate": 14.76,
+    "ban_rate": 1.6,
+    "matches": 220233
+  },
+  "namor": {
+    "slug": "namor",
+    "name": "Namor",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 48.09,
+    "pick_rate": 13.02,
+    "ban_rate": 15.15,
+    "matches": 194331
+  },
+  "cloak-dagger": {
+    "slug": "cloak-dagger",
+    "name": "Cloak & Dagger",
+    "role": "Strategist",
+    "tier": "B",
+    "win_rate": 47.86,
+    "pick_rate": 47.0,
+    "ban_rate": 0.68,
+    "matches": 701443
+  },
+  "star-lord": {
+    "slug": "star-lord",
+    "name": "Star Lord",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 47.29,
+    "pick_rate": 10.3,
+    "ban_rate": 0.76,
+    "matches": 153738
+  },
+  "hawkeye": {
+    "slug": "hawkeye",
+    "name": "Hawkeye",
+    "role": "Duelist",
+    "tier": "B",
+    "win_rate": 47.13,
+    "pick_rate": 7.77,
+    "ban_rate": 3.11,
+    "matches": 115927
+  },
+  "invisible-woman": {
+    "slug": "invisible-woman",
+    "name": "Invisible Woman",
+    "role": "Strategist",
+    "tier": "B",
+    "win_rate": 47.11,
+    "pick_rate": 38.72,
+    "ban_rate": 0.53,
+    "matches": 577892
+  },
+  "the-punisher": {
+    "slug": "the-punisher",
+    "name": "The Punisher",
+    "role": "Duelist",
+    "tier": "C",
+    "win_rate": 46.42,
+    "pick_rate": 9.47,
+    "ban_rate": 0.34,
+    "matches": 141346
+  },
+  "moon-knight": {
+    "slug": "moon-knight",
+    "name": "Moon Knight",
+    "role": "Duelist",
+    "tier": "C",
+    "win_rate": 46.26,
+    "pick_rate": 13.78,
+    "ban_rate": 0.47,
+    "matches": 205635
+  },
+  "magneto": {
+    "slug": "magneto",
+    "name": "Magneto",
+    "role": "Vanguard",
+    "tier": "C",
+    "win_rate": 46.11,
+    "pick_rate": 18.91,
+    "ban_rate": 0.64,
+    "matches": 282170
+  },
+  "squirrel-girl": {
+    "slug": "squirrel-girl",
+    "name": "Squirrel Girl",
+    "role": "Duelist",
+    "tier": "C",
+    "win_rate": 45.27,
+    "pick_rate": 9.58,
+    "ban_rate": 0.56,
+    "matches": 142930
+  },
+  "luna-snow": {
+    "slug": "luna-snow",
+    "name": "Luna Snow",
+    "role": "Strategist",
+    "tier": "C",
+    "win_rate": 45.16,
+    "pick_rate": 21.75,
+    "ban_rate": 0.88,
+    "matches": 324624
+  },
+  "wolverine": {
+    "slug": "wolverine",
+    "name": "Wolverine",
+    "role": "Duelist",
+    "tier": "C",
+    "win_rate": 44.45,
+    "pick_rate": 9.24,
+    "ban_rate": 10.37,
+    "matches": 137828
+  },
+  "winter-soldier": {
+    "slug": "winter-soldier",
+    "name": "Winter Soldier",
+    "role": "Duelist",
+    "tier": "C",
+    "win_rate": 44.29,
+    "pick_rate": 13.13,
+    "ban_rate": 3.55,
+    "matches": 195917
+  },
+  "jeff-the-land-shark": {
+    "slug": "jeff-the-land-shark",
+    "name": "Jeff The Land Shark",
+    "role": "Strategist",
+    "tier": "D",
+    "win_rate": 42.27,
+    "pick_rate": 11.29,
+    "ban_rate": 0.37,
+    "matches": 168479
+  },
+  "black-widow": {
+    "slug": "black-widow",
+    "name": "Black Widow",
+    "role": "Duelist",
+    "tier": "D",
+    "win_rate": 39.55,
+    "pick_rate": 3.49,
+    "ban_rate": 0.27,
+    "matches": 52079
+  }
+}

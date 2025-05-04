@@ -1,0 +1,72 @@
+{
+  "manifest_version": 2,
+  "type": "WebApp",
+  "meta": {
+    "name": "Marvel Rivals Swap",
+    "author": "Mario Gusman",
+    "version": "0.1.4",
+    "minimum-overwolf-version": "0.160.0",
+    "description": "Suggests better heroes to swap to during Marvel Rivals matches",
+    "icon": "assets/icon.png",
+    "icon_gray": "assets/icon_gray.png",
+    "launcher_icon": "assets/icon.png",
+    "window_icon": "assets/icon.png"
+  },
+  "permissions": [
+    "Hotkeys",
+    "GameInfo",
+    "GamesEvents",
+    "WindowsManagement",
+    "FileSystem"
+  ],
+  "data": {
+    "start_window": "background",
+    "game_targeting": {
+      "type": "dedicated",
+      "game_ids": [24890]
+    },
+    "game_events": [24890],
+    "required_features": {
+      "24890": [
+        "game_info",
+        "match_info",
+        "death",
+        "kill",
+        "assist"
+      ]
+    },
+    "hotkeys": {
+      "show_overlay": {
+        "title": "Show Hero Suggestions",
+        "action-type": "custom",
+        "default": "Alt+S"
+      }
+    },
+    "windows": {
+      "background": {
+        "file": "background/background.html",
+        "background": true,
+        "open_dev_tools": false,
+        "show_in_taskbar": false,
+        "transparent": true,
+        "clickthrough": true,
+        "background_optimization": true        
+      },
+      "overlay": {
+        "file": "overlay/overlay.html",
+        "transparent": true,
+        "resizable": true,
+        "clickthrough": false,
+        "show_in_taskbar": false,
+        "native_window": true,
+        "topmost": true,
+        "in_game_only": true,
+        "size": {
+          "width": 2560,
+          "height": 1440
+        },
+        "start_position": { "top": 0, "left": 0 }
+      }
+    }
+  }
+}

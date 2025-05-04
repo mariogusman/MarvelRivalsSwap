@@ -1,0 +1,298 @@
+{
+  "the-thing": {
+    "hero_class": "Vanguard",
+    "hero_wins": 5147,
+    "enemy_wins": 3664,
+    "winrate": 58.42,
+    "difference": 16.83,
+    "matches": 8811
+  },
+  "magneto": {
+    "hero_class": "Vanguard",
+    "hero_wins": 6899,
+    "enemy_wins": 5286,
+    "winrate": 56.62,
+    "difference": 13.24,
+    "matches": 12185
+  },
+  "doctor-strange": {
+    "hero_class": "Vanguard",
+    "hero_wins": 3782,
+    "enemy_wins": 3012,
+    "winrate": 55.67,
+    "difference": 11.33,
+    "matches": 6794
+  },
+  "emma-frost": {
+    "hero_class": "Vanguard",
+    "hero_wins": 11973,
+    "enemy_wins": 10484,
+    "winrate": 53.32,
+    "difference": 6.63,
+    "matches": 22457
+  },
+  "thor": {
+    "hero_class": "Vanguard",
+    "hero_wins": 2360,
+    "enemy_wins": 2122,
+    "winrate": 52.66,
+    "difference": 5.31,
+    "matches": 4482
+  },
+  "venom": {
+    "hero_class": "Vanguard",
+    "hero_wins": 2478,
+    "enemy_wins": 2256,
+    "winrate": 52.34,
+    "difference": 4.69,
+    "matches": 4734
+  },
+  "peni-parker": {
+    "hero_class": "Vanguard",
+    "hero_wins": 913,
+    "enemy_wins": 836,
+    "winrate": 52.2,
+    "difference": 4.4,
+    "matches": 1749
+  },
+  "groot": {
+    "hero_class": "Vanguard",
+    "hero_wins": 1848,
+    "enemy_wins": 1769,
+    "winrate": 51.09,
+    "difference": 2.18,
+    "matches": 3617
+  },
+  "hulk": {
+    "hero_class": "Vanguard",
+    "hero_wins": 1860,
+    "enemy_wins": 1850,
+    "winrate": 50.13,
+    "difference": 0.27,
+    "matches": 3710
+  },
+  "captain-america": {
+    "hero_class": "Vanguard",
+    "hero_wins": 2757,
+    "enemy_wins": 2946,
+    "winrate": 48.34,
+    "difference": 3.31,
+    "matches": 5703
+  },
+  "winter-soldier": {
+    "hero_class": "Duelist",
+    "hero_wins": 3869,
+    "enemy_wins": 2337,
+    "winrate": 62.34,
+    "difference": 24.69,
+    "matches": 6206
+  },
+  "squirrel-girl": {
+    "hero_class": "Duelist",
+    "hero_wins": 771,
+    "enemy_wins": 466,
+    "winrate": 62.33,
+    "difference": 24.66,
+    "matches": 1237
+  },
+  "wolverine": {
+    "hero_class": "Duelist",
+    "hero_wins": 1314,
+    "enemy_wins": 855,
+    "winrate": 60.58,
+    "difference": 21.16,
+    "matches": 2169
+  },
+  "black-widow": {
+    "hero_class": "Duelist",
+    "hero_wins": 630,
+    "enemy_wins": 417,
+    "winrate": 60.17,
+    "difference": 20.34,
+    "matches": 1047
+  },
+  "moon-knight": {
+    "hero_class": "Duelist",
+    "hero_wins": 1211,
+    "enemy_wins": 854,
+    "winrate": 58.64,
+    "difference": 17.29,
+    "matches": 2065
+  },
+  "the-punisher": {
+    "hero_class": "Duelist",
+    "hero_wins": 1146,
+    "enemy_wins": 825,
+    "winrate": 58.14,
+    "difference": 16.29,
+    "matches": 1971
+  },
+  "scarlet-witch": {
+    "hero_class": "Duelist",
+    "hero_wins": 2449,
+    "enemy_wins": 1788,
+    "winrate": 57.8,
+    "difference": 15.6,
+    "matches": 4237
+  },
+  "namor": {
+    "hero_class": "Duelist",
+    "hero_wins": 2046,
+    "enemy_wins": 1519,
+    "winrate": 57.39,
+    "difference": 14.78,
+    "matches": 3565
+  },
+  "black-panther": {
+    "hero_class": "Duelist",
+    "hero_wins": 1595,
+    "enemy_wins": 1319,
+    "winrate": 54.74,
+    "difference": 9.47,
+    "matches": 2914
+  },
+  "star-lord": {
+    "hero_class": "Duelist",
+    "hero_wins": 2815,
+    "enemy_wins": 2384,
+    "winrate": 54.15,
+    "difference": 8.29,
+    "matches": 5199
+  },
+  "hela": {
+    "hero_class": "Duelist",
+    "hero_wins": 2793,
+    "enemy_wins": 2391,
+    "winrate": 53.88,
+    "difference": 7.75,
+    "matches": 5184
+  },
+  "spider-man": {
+    "hero_class": "Duelist",
+    "hero_wins": 2953,
+    "enemy_wins": 2541,
+    "winrate": 53.75,
+    "difference": 7.5,
+    "matches": 5494
+  },
+  "hawkeye": {
+    "hero_class": "Duelist",
+    "hero_wins": 1510,
+    "enemy_wins": 1331,
+    "winrate": 53.15,
+    "difference": 6.3,
+    "matches": 2841
+  },
+  "mister-fantastic": {
+    "hero_class": "Duelist",
+    "hero_wins": 3642,
+    "enemy_wins": 3249,
+    "winrate": 52.85,
+    "difference": 5.7,
+    "matches": 6891
+  },
+  "psylocke": {
+    "hero_class": "Duelist",
+    "hero_wins": 3751,
+    "enemy_wins": 3358,
+    "winrate": 52.76,
+    "difference": 5.53,
+    "matches": 7109
+  },
+  "human-torch": {
+    "hero_class": "Duelist",
+    "hero_wins": 1636,
+    "enemy_wins": 1570,
+    "winrate": 51.03,
+    "difference": 2.06,
+    "matches": 3206
+  },
+  "magik": {
+    "hero_class": "Duelist",
+    "hero_wins": 2863,
+    "enemy_wins": 2835,
+    "winrate": 50.25,
+    "difference": 0.49,
+    "matches": 5698
+  },
+  "iron-man": {
+    "hero_class": "Duelist",
+    "hero_wins": 1253,
+    "enemy_wins": 1333,
+    "winrate": 48.45,
+    "difference": 3.09,
+    "matches": 2586
+  },
+  "storm": {
+    "hero_class": "Duelist",
+    "hero_wins": 1041,
+    "enemy_wins": 1121,
+    "winrate": 48.15,
+    "difference": 3.7,
+    "matches": 2162
+  },
+  "cloak-dagger": {
+    "hero_class": "Strategist",
+    "hero_wins": 8173,
+    "enemy_wins": 5899,
+    "winrate": 58.08,
+    "difference": 16.16,
+    "matches": 14072
+  },
+  "invisible-woman": {
+    "hero_class": "Strategist",
+    "hero_wins": 9031,
+    "enemy_wins": 6668,
+    "winrate": 57.53,
+    "difference": 15.05,
+    "matches": 15699
+  },
+  "jeff-the-land-shark": {
+    "hero_class": "Strategist",
+    "hero_wins": 1494,
+    "enemy_wins": 1110,
+    "winrate": 57.37,
+    "difference": 14.75,
+    "matches": 2604
+  },
+  "luna-snow": {
+    "hero_class": "Strategist",
+    "hero_wins": 7126,
+    "enemy_wins": 5608,
+    "winrate": 55.96,
+    "difference": 11.92,
+    "matches": 12734
+  },
+  "adam-warlock": {
+    "hero_class": "Strategist",
+    "hero_wins": 1379,
+    "enemy_wins": 1118,
+    "winrate": 55.23,
+    "difference": 10.45,
+    "matches": 2497
+  },
+  "loki": {
+    "hero_class": "Strategist",
+    "hero_wins": 5292,
+    "enemy_wins": 4892,
+    "winrate": 51.96,
+    "difference": 3.93,
+    "matches": 10184
+  },
+  "rocket-raccoon": {
+    "hero_class": "Strategist",
+    "hero_wins": 13543,
+    "enemy_wins": 12631,
+    "winrate": 51.74,
+    "difference": 3.48,
+    "matches": 26174
+  },
+  "mantis": {
+    "hero_class": "Strategist",
+    "hero_wins": 1493,
+    "enemy_wins": 1419,
+    "winrate": 51.27,
+    "difference": 2.54,
+    "matches": 2912
+  }
+}

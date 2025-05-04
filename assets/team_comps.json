@@ -1,0 +1,162 @@
+[
+  {
+    "vanguard": 2,
+    "duelist": 2,
+    "strategist": 2,
+    "win_rate": 53.39,
+    "pick_rate": 68.27,
+    "matches": 1923563
+  },
+  {
+    "vanguard": 1,
+    "duelist": 3,
+    "strategist": 2,
+    "win_rate": 48.42,
+    "pick_rate": 14.45,
+    "matches": 407044
+  },
+  {
+    "vanguard": 2,
+    "duelist": 1,
+    "strategist": 3,
+    "win_rate": 39.49,
+    "pick_rate": 6.47,
+    "matches": 182256
+  },
+  {
+    "vanguard": 1,
+    "duelist": 2,
+    "strategist": 3,
+    "win_rate": 38.27,
+    "pick_rate": 5.24,
+    "matches": 147615
+  },
+  {
+    "vanguard": 3,
+    "duelist": 1,
+    "strategist": 2,
+    "win_rate": 41.72,
+    "pick_rate": 3.07,
+    "matches": 86591
+  },
+  {
+    "vanguard": 2,
+    "duelist": 3,
+    "strategist": 1,
+    "win_rate": 33.13,
+    "pick_rate": 1.12,
+    "matches": 31640
+  },
+  {
+    "vanguard": 3,
+    "duelist": 2,
+    "strategist": 1,
+    "win_rate": 28.17,
+    "pick_rate": 0.35,
+    "matches": 9832
+  },
+  {
+    "vanguard": 1,
+    "duelist": 4,
+    "strategist": 1,
+    "win_rate": 27.26,
+    "pick_rate": 0.28,
+    "matches": 7938
+  },
+  {
+    "vanguard": 3,
+    "duelist": 0,
+    "strategist": 3,
+    "win_rate": 34.81,
+    "pick_rate": 0.2,
+    "matches": 5498
+  },
+  {
+    "vanguard": 0,
+    "duelist": 4,
+    "strategist": 2,
+    "win_rate": 26.6,
+    "pick_rate": 0.19,
+    "matches": 5230
+  },
+  {
+    "vanguard": 1,
+    "duelist": 1,
+    "strategist": 4,
+    "win_rate": 19.39,
+    "pick_rate": 0.13,
+    "matches": 3713
+  },
+  {
+    "vanguard": 0,
+    "duelist": 3,
+    "strategist": 3,
+    "win_rate": 18.76,
+    "pick_rate": 0.13,
+    "matches": 3567
+  },
+  {
+    "vanguard": 2,
+    "duelist": 0,
+    "strategist": 4,
+    "win_rate": 20.55,
+    "pick_rate": 0.05,
+    "matches": 1377
+  },
+  {
+    "vanguard": 4,
+    "duelist": 0,
+    "strategist": 2,
+    "win_rate": 40.42,
+    "pick_rate": 0.04,
+    "matches": 1044
+  },
+  {
+    "vanguard": 0,
+    "duelist": 5,
+    "strategist": 1,
+    "win_rate": 20.77,
+    "pick_rate": 0.01,
+    "matches": 313
+  },
+  {
+    "vanguard": 4,
+    "duelist": 1,
+    "strategist": 1,
+    "win_rate": 33.06,
+    "pick_rate": 0.01,
+    "matches": 242
+  },
+  {
+    "vanguard": 0,
+    "duelist": 2,
+    "strategist": 4,
+    "win_rate": 10.0,
+    "pick_rate": 0.0,
+    "matches": 100
+  },
+  {
+    "vanguard": 5,
+    "duelist": 0,
+    "strategist": 1,
+    "win_rate": 62.5,
+    "pick_rate": 0.0,
+    "matches": 16
+  },
+  {
+    "vanguard": 2,
+    "duelist": 4,
+    "strategist": 0,
+    "win_rate": 0.0,
+    "pick_rate": 0.0,
+    "matches": 2
+  },
+  {
+    "vanguard": 1,
+    "duelist": 0,
+    "strategist": 5,
+    "win_rate": 0.0,
+    "pick_rate": 0.0,
+    "matches": 1
+  }
+]
