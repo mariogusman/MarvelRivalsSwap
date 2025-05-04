@@ -588,6 +588,15 @@ function ensureFullscreenPosition() {
 
     // Render teams
     const teamBox = document.getElementById('team-container');
+    function getCanonicalSlug(rawNameOrSlug) {
+      const heroNameToSlug = {
+        "bruce-banner": "hulk",
+        // ...other mappings...
+      };
+      const slug = String(rawNameOrSlug).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      return heroNameToSlug[slug] || slug;
+    }
+
     ['Your', 'Enemy'].forEach((label, idx) => {
       const sec = document.createElement('div'); sec.className = 'team-section';
 
@@ -621,7 +630,7 @@ function ensureFullscreenPosition() {
         if (members[i]) {
           const im = document.createElement('img');
           im.className = 'team-head-img';
-          im.src = `../assets/images/head-${members[i]}.png`;
+          im.src = `../assets/images/head-${getCanonicalSlug(members[i])}.png`;
           heads.appendChild(im);
         } else {
           const spinnerContainer = document.createElement('div');

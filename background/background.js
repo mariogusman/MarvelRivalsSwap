@@ -42,6 +42,7 @@ let teamups = [];
 let teamComps = [];
 let avgCompWr = 50;
 
+// --- Canonical Slug Mapping ---
 const heroNameToSlug = {
   "bruce-banner": "hulk",
   // Add more mappings if needed
@@ -52,6 +53,11 @@ function normalizeSlug(s) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+function getCanonicalSlug(rawNameOrSlug) {
+  const slug = normalizeSlug(rawNameOrSlug);
+  return heroNameToSlug[slug] || slug;
 }
 
 function titleize(slug) {
@@ -163,7 +169,8 @@ function avgTeamupScore(slug, team) {
 function countRoles(team) {
   const counts = { Vanguard: 0, Duelist: 0, Strategist: 0 };
   team.forEach(slug => {
-    const role = charactersOverview[slug]?.role;
+    const canonical = getCanonicalSlug(slug);
+    const role = charactersOverview[canonical]?.role;
     if (counts.hasOwnProperty(role)) counts[role]++;
   });
   return counts;
@@ -260,9 +267,9 @@ const processRoster = debounce(() => {
   if (!entries.length) return;
   const local = entries.find(e => e.is_local);
   if (!local) return;
-  const myHero = local.slug;
-  const myTeam = unique(entries.filter(e => e.is_teammate || e.is_local).map(e => e.slug)).slice(0, 6);
-  const enemyTeam = unique(entries.filter(e => !e.is_teammate && !e.is_local).map(e => e.slug)).slice(0, 6);
+  const myHero = getCanonicalSlug(local.slug);
+  const myTeam = unique(entries.filter(e => e.is_teammate || e.is_local).map(e => getCanonicalSlug(e.slug))).slice(0, 6);
+  const enemyTeam = unique(entries.filter(e => !e.is_teammate && !e.is_local).map(e => getCanonicalSlug(e.slug))).slice(0, 6);
 
   // Save teams for overlay rendering (even if partial)
   localStorage.setItem('latest_teams', JSON.stringify({
@@ -299,68 +306,101 @@ const processRoster = debounce(() => {
     }
   });
 
-  // Do NOT clear rosterBuffer here; only clear on new match/lobby if needed
   purgeStaleRosterEntries();
 }, 100); // 100ms debounce
 
-const ROSTER_ENTRY_TIMEOUT = 10000; // 10 seconds
+const ROSTER_ENTRY_TIMEOUT = 30000; // 30 seconds
+
+function clearRosterBuffer(soft = false) {
+  if (soft) {
+    Object.values(rosterBuffer).forEach(entry => {
+      entry.staleSince = Date.now();
+    });
+    console.log('Roster buffer soft-cleared (marked stale) due to match event');
+  } else {
+    rosterBuffer = {};
+    console.log('Roster buffer hard-cleared due to match event');
+  }
+}
 
 function purgeStaleRosterEntries() {
   const now = Date.now();
   Object.keys(rosterBuffer).forEach(uid => {
-    if (now - rosterBuffer[uid].lastUpdate > ROSTER_ENTRY_TIMEOUT) {
+    const entry = rosterBuffer[uid];
+    // Remove if not updated for 30s or marked stale for 30s
+    if (
+      now - entry.lastUpdate > ROSTER_ENTRY_TIMEOUT ||
+      (entry.staleSince && now - entry.staleSince > ROSTER_ENTRY_TIMEOUT)
+    ) {
       delete rosterBuffer[uid];
     }
   });
 }
 
+// --- Robust Roster Update Logic ---
+
 function handleInfoUpdates(event) {
   const info = event.info?.match_info;
   if (!info) return;
 
-  // If this is a full roster update, clear the buffer first
-  const rosterKeys = Object.keys(info).filter(k => k.startsWith('roster_'));
-  if (rosterKeys.length >= 10) { // 10 or more means likely a full roster
+  // Gather all roster_xx keys and parse them
+  const rosterEntries = Object.entries(info)
+    .filter(([k]) => k.startsWith('roster_'))
+    .map(([k, v]) => {
+      try { return JSON.parse(v); } catch { return null; }
+    })
+    .filter(Boolean);
+
+  // If this is a full roster update (10+ players), clear buffer first
+  if (rosterEntries.length >= 10) {
     rosterBuffer = {};
   }
 
-  Object.entries(info).forEach(([key, val]) => {
-    if (!key.startsWith('roster_') || !val) return;
-    let data;
-    try { data = JSON.parse(val); } catch { return; }
-    let slug = '';
-    if (data.character_name) {
-      const normName = normalizeSlug(data.character_name);
-      slug = heroNameToSlug[normName] || normName;
-    } else if (data.character_id) {
-      slug = normalizeSlug(data.character_id);
-    } else if (data.name) {
-      slug = normalizeSlug(data.name);
-    } else {
-      slug = normalizeSlug(key);
-    }
-    if (!slug || !validSlugs.has(slug)) {
-      console.warn('Slug not in validSlugs:', slug, Array.from(validSlugs));
+  // Track UIDs seen in this update
+  const seenUIDs = new Set();
+
+  rosterEntries.forEach(data => {
+    const uid = data.uid || data.name || data.character_id;
+    if (!uid) return;
+    seenUIDs.add(uid);
+
+    // Canonical slug for all logic
+    const canonicalSlug = getCanonicalSlug(data.character_name || data.name);
+
+    // Only add if valid
+    if (!validSlugs.has(canonicalSlug)) {
+      console.warn('Unknown hero slug:', canonicalSlug, 'from', data.character_name || data.name);
       return;
     }
 
-    // Use UID if available, else fallback to name or character_id
-    const uid = data.uid || data.name || data.character_id || key;
-
     rosterBuffer[uid] = {
-      slug,
-      is_teammate: data.is_teammate || data.isTeammate || false,
-      is_local: data.is_local || data.isLocal || false,
-      lastUpdate: Date.now() // <-- Add this line
+      ...data,
+      slug: canonicalSlug,
+      lastUpdate: Date.now()
     };
   });
+
+  // Remove any UIDs from rosterBuffer not seen in this update (only if full update)
+  if (rosterEntries.length >= 10) {
+    Object.keys(rosterBuffer).forEach(uid => {
+      if (!seenUIDs.has(uid)) {
+        delete rosterBuffer[uid];
+      }
+    });
+  }
+
   purgeStaleRosterEntries();
   processRoster();
 }
 
-function clearRosterBuffer() {
-  rosterBuffer = {};
-  console.log('Roster buffer cleared due to match/round event');
+// Only soft-clear on match_start and match_end
+function handleGameEvents(event) {
+  if (!event || !event.events) return;
+  for (const ev of event.events) {
+    if (ev.name === 'match_start' || ev.name === 'match_end') {
+      clearRosterBuffer(true); // Soft clear
+    }
+  }
 }
 
 let overlayAutoCloseTimer = null;
@@ -411,47 +451,8 @@ function handleGameInfoScene(event) {
 async function init() {
   await loadStaticData();
   overwolf.games.events.onInfoUpdates2.addListener(handleInfoUpdates);
-  overwolf.games.events.onInfoUpdates2.addListener(handleGameInfoScene); // <--- Add this line
-  overwolf.games.events.onNewEvents.addListener(e => {
-    // Clear buffer on match/round start/end
-    if (e.events.some(ev =>
-      ["match_start", "match_end", "round_start", "round_end"].includes(ev.name)
-    )) {
-      clearRosterBuffer();
-    }
-
-    // Clear recs/teams on match_end
-    if (e.events.some(ev => ev.name === "match_end")) {
-      localStorage.setItem('latest_teams', JSON.stringify({
-        your: { members: [], roles: { Vanguard: 0, Duelist: 0, Strategist: 0 } },
-        enemy: { members: [], roles: { Vanguard: 0, Duelist: 0, Strategist: 0 } }
-      }));
-      saveRecommendations([{ placeholder: true }]);
-      // Optionally, refresh overlay if open
-      overwolf.windows.obtainDeclaredWindow('overlay', r => {
-        if (r.status === 'success') {
-          overwolf.windows.sendMessage(r.window.id, 'refresh_recs', {}, () => {});
-        }
-      });
-      console.log('Match ended: recommendations reset to placeholder.');
-    }
-
-    // Show overlay on death as before
-    if (e.events.some(ev => ev.name === 'death')) {
-      toggleOverlay();
-      // Auto-close overlay after 9 seconds
-      if (overlayAutoCloseTimer) clearTimeout(overlayAutoCloseTimer);
-      overlayAutoCloseTimer = setTimeout(() => {
-        // Send a message to overlay to disable TAB toggling
-        overwolf.windows.obtainDeclaredWindow('overlay', r => {
-          if (r.status === 'success') {
-            overwolf.windows.sendMessage(r.window.id, 'auto_close_overlay', {}, () => {});
-            overwolf.windows.close('overlay', () => {});
-          }
-        });
-      }, 9000);
-    }
-  });
+  overwolf.games.events.onInfoUpdates2.addListener(handleGameInfoScene);
+  overwolf.games.events.onNewEvents.addListener(handleGameEvents);
   overwolf.settings.hotkeys.onPressed.addListener(h => {
     if (h.name === 'show_overlay') toggleOverlay();
   });
