@@ -44,64 +44,89 @@ let rosterBuffer = {};
 let teamups = [];
 let teamComps = [];
 let avgCompWr = 50;
+let preprocessedTeamups = { pairs: new Map(), trios: new Map() }; // New variable for optimized lookups
 
-// --- Canonical Slug Mapping ---
-const heroNameToSlug = {
-  "bruce-banner": "hulk",
-  // Add more mappings if needed
-};
+const STATIC_DATA_BASE_URL = 'https://raw.githubusercontent.com/mariogusman/MarvelRivalsSwap/refs/heads/main/assets/'; // <<< IMPORTANT: REPLACE THIS
+const LOCAL_ASSET_PATH = '../assets/';
 
-function normalizeSlug(s) {
-  return String(s)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function getCanonicalSlug(rawNameOrSlug) {
-  const slug = normalizeSlug(rawNameOrSlug);
-  return heroNameToSlug[slug] || slug;
-}
-
-function titleize(slug) {
-  if (!slug || typeof slug !== 'string') return '';
-  return slug
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+async function fetchStaticFileWithFallback(filename, isCritical = true) {
+  let data = null;
+  try {
+    const response = await fetch(`${STATIC_DATA_BASE_URL}${filename}?v=${Date.now()}`); // Cache bust with version
+    if (!response.ok) {
+      console.warn(`Remote fetch for ${filename} failed with status ${response.status}. Falling back to local.`);
+      throw new Error(`Remote fetch failed: ${response.status}`);
+    }
+    data = await response.json();
+    console.log(`Successfully fetched remote ${filename}`);
+    return data;
+  } catch (err) {
+    console.warn(`Failed to fetch remote ${filename} (Error: ${err.message}). Attempting local fallback.`);
+    try {
+      const localResponse = await fetch(`${LOCAL_ASSET_PATH}${filename}`);
+      if (!localResponse.ok) {
+        console.error(`CRITICAL: Local fallback for ${filename} also failed with status ${localResponse.status}.`);
+        throw new Error(`Local fallback failed: ${localResponse.status}`);
+      }
+      data = await localResponse.json();
+      console.log(`Successfully loaded local fallback ${filename}`);
+      return data;
+    } catch (localErr) {
+      console.error(`CRITICAL: Failed to load ${filename} from both remote and local. Error: ${localErr.message}`);
+      if (isCritical) throw localErr; // Rethrow if critical, or return default/empty
+      return {}; // Or appropriate default like [] for arrays
+    }
+  }
 }
 
 async function loadStaticData() {
   try {
-    const [charsRes, tuRes, tcRes, allMatchupsRes] = await Promise.all([
-      fetch('../assets/characters_overview.json'),
-      fetch('../assets/teamups.json'),
-      fetch('../assets/team_comps.json'),
-      fetch('../assets/all_matchups.json')
-    ]);
+    const rawCharsData = await fetchStaticFileWithFallback('characters_overview.json');
+    const teamupsData = await fetchStaticFileWithFallback('teamups.json'); // This is the raw teamups array
+    const teamCompsData = await fetchStaticFileWithFallback('team_comps.json');
+    const matchupsData = await fetchStaticFileWithFallback('all_matchups.json');
 
-    if (!charsRes.ok || !tuRes.ok || !tcRes.ok || !allMatchupsRes.ok) throw new Error('Static fetch failed');
+    charactersOverview = rawCharsData;
+    teamups = teamupsData; // Keep original raw teamups if needed elsewhere, or just use it for preprocessing
+    teamComps = teamCompsData;
+    matchups = matchupsData;
+    
+    validSlugs = new Set(Object.keys(charactersOverview));
 
-    const rawChars = await charsRes.json();
-    teamups = await tuRes.json();
-    teamComps = await tcRes.json();
-    matchups = await allMatchupsRes.json();
-
-    // compute average comp win-rate
-    avgCompWr = teamComps.reduce((sum, c) => sum + Number(c.win_rate), 0) / teamComps.length;
-
-    // load charactersOverview and validSlugs
-    Object.entries(rawChars).forEach(([slug, hero]) => {
-      validSlugs.add(slug);
-      charactersOverview[slug] = hero;
-    });
-
-    // Save charactersOverview to localStorage
+    if (teamComps && teamComps.length > 0) {
+      avgCompWr = teamComps.reduce((sum, c) => sum + Number(c.win_rate), 0) / teamComps.length;
+    } else {
+      avgCompWr = 50;
+    }
     localStorage.setItem('characters_overview', JSON.stringify(charactersOverview));
 
-    console.log('Static data loaded');
+    // Pre-process teamups for faster lookups
+    preprocessedTeamups.pairs.clear();
+    preprocessedTeamups.trios.clear();
+    if (Array.isArray(teamups)) { // Ensure teamups is an array
+      teamups.forEach(item => {
+        if (item && Array.isArray(item.team) && typeof item.win_rate !== 'undefined') { // Basic validation
+          const sortedTeamKey = item.team.slice().sort().join('|');
+          if (item.team.length === 2) {
+            preprocessedTeamups.pairs.set(sortedTeamKey, Number(item.win_rate));
+          } else if (item.team.length === 3) {
+            // For trios, store the win_rate and the original team for anchor checks
+            preprocessedTeamups.trios.set(sortedTeamKey, { win_rate: Number(item.win_rate), original_team: item.team });
+          }
+        }
+      });
+    }
+    console.log('Preprocessed teamups:', preprocessedTeamups.pairs.size, 'pairs,', preprocessedTeamups.trios.size, 'trios');
+
+    console.log('Static data loaded (remote or local fallback).');
   } catch (err) {
-    console.error('loadStaticData error', err);
+    console.error('Major error in loadStaticData:', err);
+    charactersOverview = charactersOverview || {};
+    teamups = teamups || [];
+    teamComps = teamComps || [];
+    matchups = matchups || {};
+    avgCompWr = avgCompWr || 50;
+    validSlugs = validSlugs.size > 0 ? validSlugs : new Set();
   }
 }
 
@@ -124,31 +149,41 @@ function avgVsEnemies(slug, enemyTeam) {
 
 const TEAMUP_ANCHORS = ["hela", "adam-warlock", "venom", "groot"];
 
-function avgTeamupScore(slug, team) {
+function avgTeamupScore(slug, team) { // team here is an array of teammate slugs
   let total = 0, count = 0;
-  // pairs
-  team.forEach(m => {
-    teamups.forEach(item => {
-      if (item.team.length === 2 && [slug, m].sort().join('|') === item.team.slice().sort().join('|')) {
-        total += Number(item.win_rate);
-        count++;
-      }
-    });
+
+  // Pairs
+  team.forEach(m => { // m is a teammate slug
+    const pairKey = [slug, m].sort().join('|');
+    if (preprocessedTeamups.pairs.has(pairKey)) {
+      total += preprocessedTeamups.pairs.get(pairKey);
+      count++;
+    }
   });
-  // trios with anchor logic
+
+  // Trios
   for (let i = 0; i < team.length; i++) {
     for (let j = i + 1; j < team.length; j++) {
-      const trio = [slug, team[i], team[j]].sort();
-      teamups.forEach(item => {
-        if (item.team.length === 3 && item.team.slice().sort().join('|') === trio.join('|')) {
-          // Only apply bonus if anchor is present
-          const anchor = TEAMUP_ANCHORS.find(a => item.team.includes(a));
-          if (anchor && trio.includes(anchor)) {
-            total += Number(item.win_rate);
+      const teammate1 = team[i];
+      const teammate2 = team[j];
+      const trioMembers = [slug, teammate1, teammate2];
+      const trioKey = trioMembers.slice().sort().join('|');
+
+      if (preprocessedTeamups.trios.has(trioKey)) {
+        const trioData = preprocessedTeamups.trios.get(trioKey);
+        const definedTrioTeam = trioData.original_team;
+        const anchorInDefinedTeam = TEAMUP_ANCHORS.find(a => definedTrioTeam.includes(a));
+
+        if (anchorInDefinedTeam) {
+          if (trioMembers.includes(anchorInDefinedTeam)) {
+            total += trioData.win_rate;
             count++;
           }
+        } else {
+          total += trioData.win_rate;
+          count++;
         }
-      });
+      }
     }
   }
   return count ? total / count : null;
@@ -182,17 +217,14 @@ function computeEnemyStrength(enemyTeam) {
 }
 
 function computeRecommendations(myHero, myTeam, enemyTeam) {
-  // Compute expected win rate for current hero
   const currentWinRate = computeExpectedWinRate(myHero, myTeam, enemyTeam);
 
   return Array.from(validSlugs)
     .filter(s => s !== myHero && !myTeam.includes(s))
     .map(slug => {
-      // Simulate team with candidate
       const candidateTeam = [...myTeam.filter(h => h !== myHero), slug];
       const candidateWinRate = computeExpectedWinRate(slug, candidateTeam, enemyTeam);
 
-      // Calculate stat breakdowns for display
       const avg_vs = avgVsEnemies(slug, enemyTeam);
       const baseline = lookupWinRate(slug);
       const teammates = candidateTeam.filter(m => m !== slug);
@@ -215,23 +247,16 @@ function computeRecommendations(myHero, myTeam, enemyTeam) {
 }
 
 function computeExpectedWinRate(hero, myTeam, enemyTeam) {
-  // 1. Average winrate vs enemy team
   const avgVs = avgVsEnemies(hero, enemyTeam);
-
-  // 2. Team-up bonus (if any teammates)
   const teammates = myTeam.filter(m => m !== hero);
   let teamupBonus = null;
   if (teammates.length > 0) {
     const teamupRaw = avgTeamupScore(hero, teammates);
     teamupBonus = teamupRaw !== null ? teamupRaw : null;
   }
-
-  // 3. Comp bonus: lookup winrate for new comp
   const compCounts = countRoles([...myTeam.filter(m => m !== hero), hero]);
   const compWinrate = lookupCompWinrate(compCounts);
 
-  // 4. Combine: weighted average (customize weights as needed)
-  // You can adjust these weights based on data or regression
   const weights = { vs: 0.5, teamup: 0.2, comp: 0.3 };
   let total = 0, denom = 0;
   if (!isNaN(avgVs)) { total += weights.vs * avgVs; denom += weights.vs; }
@@ -248,7 +273,6 @@ function unique(arr) {
   return Array.from(new Set(arr));
 }
 
-// Lower debounce for faster updates, but not instant
 const processRoster = debounce(() => {
   console.log('Processing roster:', rosterBuffer);
   const entries = Object.values(rosterBuffer);
@@ -259,7 +283,6 @@ const processRoster = debounce(() => {
   const myTeam = unique(entries.filter(e => e.is_teammate || e.is_local).map(e => getCanonicalSlug(e.slug))).slice(0, 6);
   const enemyTeam = unique(entries.filter(e => !e.is_teammate && !e.is_local).map(e => getCanonicalSlug(e.slug))).slice(0, 6);
 
-  // Save teams for overlay rendering (even if partial)
   localStorage.setItem('latest_teams', JSON.stringify({
     your: {
       members: myTeam,
@@ -271,7 +294,6 @@ const processRoster = debounce(() => {
     }
   }));
 
-  // --- NEW: If only the local player is present, save placeholder ---
   if (myTeam.length <= 1 && enemyTeam.length === 0) {
     saveRecommendations([
       { placeholder: true }
@@ -295,9 +317,9 @@ const processRoster = debounce(() => {
   });
 
   purgeStaleRosterEntries();
-}, 100); // 100ms debounce
+}, 100);
 
-const ROSTER_ENTRY_TIMEOUT = 30000; // 30 seconds
+const ROSTER_ENTRY_TIMEOUT = 30000;
 
 function clearRosterBuffer(soft = false) {
   if (soft) {
@@ -315,7 +337,6 @@ function purgeStaleRosterEntries() {
   const now = Date.now();
   Object.keys(rosterBuffer).forEach(uid => {
     const entry = rosterBuffer[uid];
-    // Remove if not updated for 30s or marked stale for 30s
     if (
       now - entry.lastUpdate > ROSTER_ENTRY_TIMEOUT ||
       (entry.staleSince && now - entry.staleSince > ROSTER_ENTRY_TIMEOUT)
@@ -325,13 +346,10 @@ function purgeStaleRosterEntries() {
   });
 }
 
-// --- Robust Roster Update Logic ---
-
 function handleInfoUpdates(event) {
   const info = event.info?.match_info;
   if (!info) return;
 
-  // Gather all roster_xx keys and parse them
   const rosterEntries = Object.entries(info)
     .filter(([k]) => k.startsWith('roster_'))
     .map(([k, v]) => {
@@ -339,12 +357,10 @@ function handleInfoUpdates(event) {
     })
     .filter(Boolean);
 
-  // If this is a full roster update (10+ players), clear buffer first
   if (rosterEntries.length >= 10) {
     rosterBuffer = {};
   }
 
-  // Track UIDs seen in this update
   const seenUIDs = new Set();
 
   rosterEntries.forEach(data => {
@@ -352,10 +368,8 @@ function handleInfoUpdates(event) {
     if (!uid) return;
     seenUIDs.add(uid);
 
-    // Canonical slug for all logic
     const canonicalSlug = getCanonicalSlug(data.character_name || data.name);
 
-    // Only add if valid
     if (!validSlugs.has(canonicalSlug)) {
       console.warn('Unknown hero slug:', canonicalSlug, 'from', data.character_name || data.name);
       return;
@@ -368,7 +382,6 @@ function handleInfoUpdates(event) {
     };
   });
 
-  // Remove any UIDs from rosterBuffer not seen in this update (only if full update)
   if (rosterEntries.length >= 10) {
     Object.keys(rosterBuffer).forEach(uid => {
       if (!seenUIDs.has(uid)) {
@@ -381,12 +394,11 @@ function handleInfoUpdates(event) {
   processRoster();
 }
 
-// Only soft-clear on match_start and match_end
 function handleGameEvents(event) {
   if (!event || !event.events) return;
   for (const ev of event.events) {
     if (ev.name === 'match_start' || ev.name === 'match_end') {
-      clearRosterBuffer(true); // Soft clear
+      clearRosterBuffer(true);
     }
   }
 }
@@ -418,14 +430,12 @@ function handleGameInfoScene(event) {
   if (info.scene !== lastScene) {
     lastScene = info.scene;
     if (info.scene === 'Lobby') {
-      // Clear teams and set placeholder recs
       localStorage.setItem('latest_teams', JSON.stringify({
         your: { members: [], roles: { Vanguard: 0, Duelist: 0, Strategist: 0 } },
         enemy: { members: [], roles: { Vanguard: 0, Duelist: 0, Strategist: 0 } }
       }));
       saveRecommendations([{ placeholder: true }]);
       rosterBuffer = {};
-      // Optionally, refresh overlay if open
       overwolf.windows.obtainDeclaredWindow('overlay', r => {
         if (r.status === 'success') {
           overwolf.windows.sendMessage(r.window.id, 'refresh_recs', {}, () => {});
@@ -447,7 +457,6 @@ async function showGameLaunchToastOnce() {
             { message: '▼ Press Alt+S during a match to view recommendations' },
             function() {}
           );
-          // Auto-close toast after 5s (matches toast duration + animation)
           setTimeout(() => {
             overwolf.windows.close(result.window.id, () => {});
           }, 6000);
@@ -468,7 +477,6 @@ async function init() {
   });
   overwolf.games.events.setRequiredFeatures(['match_info', 'death'], () => {});
 
-  // --- Show toast on game launch ---
   overwolf.games.getRunningGameInfo(function(info) {
     if (info && info.isRunning && info.classId === 24890) {
       showGameLaunchToastOnce();
