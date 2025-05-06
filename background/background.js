@@ -44,7 +44,26 @@ let rosterBuffer = {};
 let teamups = [];
 let teamComps = [];
 let avgCompWr = 50;
-let preprocessedTeamups = { pairs: new Map(), trios: new Map() }; // New variable for optimized lookups
+let preprocessedTeamups = { pairs: new Map(), trios: new Map() };
+
+const CANONICAL_SLUG_MAP = {
+  // Add any specific hero name variations to their canonical slug
+  // This should be the primary map for the backend logic
+  "bruce-banner": "hulk",
+  "the-hulk": "hulk",
+};
+
+function getCanonicalSlug(rawNameOrSlug) {
+  if (!rawNameOrSlug) return ''; // Handle null or undefined input
+  // Normalize: lowercase, replace non-alphanumeric (except hyphens) with a single hyphen, trim leading/trailing hyphens
+  const s = String(rawNameOrSlug)
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^a-z0-9-]/g, '') // Remove characters that are not alphanumeric or hyphen
+    .replace(/--+/g, '-') // Replace multiple hyphens with a single one
+    .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
+  return CANONICAL_SLUG_MAP[s] || s;
+}
 
 const STATIC_DATA_BASE_URL = 'https://raw.githubusercontent.com/mariogusman/MarvelRivalsSwap/refs/heads/main/assets/'; // <<< IMPORTANT: REPLACE THIS
 const LOCAL_ASSET_PATH = '../assets/';
