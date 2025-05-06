@@ -66,28 +66,87 @@ with open(TEAMUPS_PATH, 'w', encoding='utf-8') as f:
 print(f"Processed {len(fixed_teamups)} teamups entries.")
 
 # 3. Convert each matchup file from array to slug-keyed dict with numeric fields
+# AND BUNDLE ALL MATCHUPS INTO A SINGLE FILE
+all_matchups_data = {} # New dictionary to hold all matchups
+
 for fname in os.listdir(MATCHUPS_DIR):
     if not fname.endswith('_matchups.json'):
         continue
     path = os.path.join(MATCHUPS_DIR, fname)
+    
+    hero_slug_from_filename = fname.replace('_matchups.json', '')
+    current_hero_slug = normalize_slug(hero_slug_from_filename)
+
+    if current_hero_slug not in valid_slugs:
+        print(f"Warning: hero slug '{current_hero_slug}' from filename {fname} not in valid_slugs. Skipping.")
+        continue
+
     with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    fixed = {}
-    for entry in data:
-        enemy = normalize_slug(entry.get('enemy_hero', ''))
-        if enemy not in valid_slugs:
-            print(f"Warning: unknown enemy '{enemy}' in {fname}")
+        try:
+            data_from_file = json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON from {fname}: {e}. Skipping this file.")
             continue
-        fixed[enemy] = {
-            'hero_class': entry.get('hero_class'),
-            'hero_wins': parse_int(entry.get('hero_wins', 0)),
-            'enemy_wins': parse_int(entry.get('enemy_wins', 0)),
-            'winrate': parse_num(entry.get('winrate', 0)),
-            'difference': parse_num(entry.get('difference', 0)),
-            'matches': parse_int(entry.get('matches', 0))
-        }
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(fixed, f, indent=2)
-    print(f"Fixed matchup file: {fname}, {len(fixed)} entries.")
+    
+    fixed_enemies = {}
+    
+    # Check if data_from_file is a list of dictionaries (original assumption)
+    # or a dictionary itself (new assumption based on error)
+    
+    if isinstance(data_from_file, list):
+        # This was the original logic, assuming each entry in the list is a dict
+        for entry_dict in data_from_file:
+            if not isinstance(entry_dict, dict):
+                print(f"Warning: Expected a dictionary for an entry in {fname}, but got {type(entry_dict)}. Skipping entry.")
+                continue
+            enemy_slug = normalize_slug(entry_dict.get('enemy_hero', ''))
+            if not enemy_slug: # Skip if enemy_hero is missing or empty after normalization
+                print(f"Warning: Missing or empty 'enemy_hero' in an entry in {fname}. Skipping entry.")
+                continue
+            if enemy_slug not in valid_slugs:
+                print(f"Warning: unknown enemy '{enemy_slug}' in {fname} for hero {current_hero_slug}. Skipping entry.")
+                continue
+            
+            fixed_enemies[enemy_slug] = {
+                'hero_class': entry_dict.get('hero_class'),
+                'hero_wins': parse_int(entry_dict.get('hero_wins', 0)),
+                'enemy_wins': parse_int(entry_dict.get('enemy_wins', 0)),
+                'winrate': parse_num(entry_dict.get('winrate', 0)),
+                'difference': parse_num(entry_dict.get('difference', 0)),
+                'matches': parse_int(entry_dict.get('matches', 0))
+            }
+    elif isinstance(data_from_file, dict):
+        # This handles the case where the JSON file is already a dictionary of enemy_slug: details
+        for enemy_slug_from_key, entry_details in data_from_file.items():
+            normalized_enemy_slug = normalize_slug(enemy_slug_from_key)
+            if not normalized_enemy_slug:
+                print(f"Warning: Invalid enemy slug key '{enemy_slug_from_key}' in {fname}. Skipping entry.")
+                continue
+            if normalized_enemy_slug not in valid_slugs:
+                print(f"Warning: unknown enemy '{normalized_enemy_slug}' (from key '{enemy_slug_from_key}') in {fname} for hero {current_hero_slug}. Skipping entry.")
+                continue
+            if not isinstance(entry_details, dict):
+                print(f"Warning: Expected a dictionary for details of '{enemy_slug_from_key}' in {fname}, but got {type(entry_details)}. Skipping entry.")
+                continue
+
+            fixed_enemies[normalized_enemy_slug] = {
+                'hero_class': entry_details.get('hero_class'),
+                'hero_wins': parse_int(entry_details.get('hero_wins', 0)),
+                'enemy_wins': parse_int(entry_details.get('enemy_wins', 0)),
+                'winrate': parse_num(entry_details.get('winrate', 0)),
+                'difference': parse_num(entry_details.get('difference', 0)),
+                'matches': parse_int(entry_details.get('matches', 0))
+            }
+    else:
+        print(f"Warning: Unexpected data type {type(data_from_file)} in {fname}. Expected list or dict. Skipping file.")
+        continue
+            
+    all_matchups_data[current_hero_slug] = fixed_enemies
+
+# After processing all files, write the bundled all_matchups.json
+all_matchups_output_path = os.path.join(BASE_DIR, 'all_matchups.json')
+with open(all_matchups_output_path, 'w', encoding='utf-8') as f:
+    json.dump(all_matchups_data, f, indent=2)
+print(f"Bundled all matchups into: {all_matchups_output_path}, {len(all_matchups_data)} heroes.")
 
 print("Static data normalization complete.")

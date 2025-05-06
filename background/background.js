@@ -73,17 +73,19 @@ function titleize(slug) {
 
 async function loadStaticData() {
   try {
-    const [charsRes, tuRes, tcRes] = await Promise.all([
+    const [charsRes, tuRes, tcRes, allMatchupsRes] = await Promise.all([
       fetch('../assets/characters_overview.json'),
       fetch('../assets/teamups.json'),
-      fetch('../assets/team_comps.json')
+      fetch('../assets/team_comps.json'),
+      fetch('../assets/all_matchups.json')
     ]);
 
-    if (!charsRes.ok || !tuRes.ok || !tcRes.ok) throw new Error('Static fetch failed');
+    if (!charsRes.ok || !tuRes.ok || !tcRes.ok || !allMatchupsRes.ok) throw new Error('Static fetch failed');
 
     const rawChars = await charsRes.json();
     teamups = await tuRes.json();
     teamComps = await tcRes.json();
+    matchups = await allMatchupsRes.json();
 
     // compute average comp win-rate
     avgCompWr = teamComps.reduce((sum, c) => sum + Number(c.win_rate), 0) / teamComps.length;
@@ -97,29 +99,6 @@ async function loadStaticData() {
     // Save charactersOverview to localStorage
     localStorage.setItem('characters_overview', JSON.stringify(charactersOverview));
 
-    // load matchups per slug
-    for (const slug of validSlugs) {
-      try {
-        const res = await fetch(`../assets/matchups/${slug}_matchups.json`);
-        if (!res.ok) continue;
-        const data = await res.json();
-        matchups[slug] = {};
-
-        if (Array.isArray(data)) {
-          data.forEach(e => {
-            const enemy = normalizeSlug(e.enemy_hero || e.enemyHero);
-            matchups[slug][enemy] = Number(e.difference?.toString().replace('%','')) || 0;
-          });
-        } else if (data && typeof data === 'object') {
-          Object.entries(data).forEach(([enemy, details]) => {
-            matchups[slug][normalizeSlug(enemy)] = Number(details.winrate) || 50;
-          });
-        }
-      } catch (err) {
-        console.warn(`Error loading matchups for ${slug}`, err);
-      }
-    }
-
     console.log('Static data loaded');
   } catch (err) {
     console.error('loadStaticData error', err);
@@ -131,9 +110,15 @@ function lookupWinRate(slug) {
 }
 
 function avgVsEnemies(slug, enemyTeam) {
+  const heroMatchups = matchups[slug];
+  if (!heroMatchups) return 50;
+
   const wrs = enemyTeam
-    .map(e => matchups[slug]?.[e])
-    .filter(v => typeof v === 'number');
+    .map(e => {
+      const matchupData = heroMatchups[e];
+      return typeof matchupData?.winrate === 'number' ? matchupData.winrate : null;
+    })
+    .filter(v => v !== null);
   return wrs.length ? wrs.reduce((a, b) => a + b, 0) / wrs.length : 50;
 }
 
